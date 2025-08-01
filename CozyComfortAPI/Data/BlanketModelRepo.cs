@@ -22,6 +22,10 @@ namespace CozyComfortAPI.Data
         {
             if (blanketModel != null)
             {
+                bool materialExists = db.Materials.Any(m => m.MaterialID == blanketModel.MaterialID);
+                if (!materialExists)
+                    return false;
+
                 db.BlanketModels.Add(blanketModel);
                 return Save();
             }
@@ -51,7 +55,7 @@ namespace CozyComfortAPI.Data
         public List<BlanketModel> GetBlanketModels()
         {
             return db.BlanketModels
-                .Include(b => b.Materials)
+                .Include(b => b.Material)
                 .ToList();
         }
 

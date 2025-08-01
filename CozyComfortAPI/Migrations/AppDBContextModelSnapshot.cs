@@ -108,6 +108,44 @@ namespace CozyComfortAPI.Migrations
                     b.HasKey("MaterialID");
 
                     b.ToTable("Materials");
+
+                    b.HasData(
+                        new
+                        {
+                            MaterialID = 1,
+                            Description = "100% organic cotton",
+                            MaterialName = "Cotton"
+                        },
+                        new
+                        {
+                            MaterialID = 2,
+                            Description = "Soft merino wool",
+                            MaterialName = "Wool"
+                        },
+                        new
+                        {
+                            MaterialID = 3,
+                            Description = "Warm polyester fleece",
+                            MaterialName = "Fleece"
+                        },
+                        new
+                        {
+                            MaterialID = 4,
+                            Description = "Eco-friendly bamboo fiber",
+                            MaterialName = "Bamboo"
+                        },
+                        new
+                        {
+                            MaterialID = 5,
+                            Description = "Luxurious cashmere wool",
+                            MaterialName = "Cashmere"
+                        },
+                        new
+                        {
+                            MaterialID = 6,
+                            Description = "Soft chenille fabric",
+                            MaterialName = "Chenille"
+                        });
                 });
 
             modelBuilder.Entity("CozyComfortAPI.Model.Order", b =>
@@ -155,13 +193,13 @@ namespace CozyComfortAPI.Migrations
 
             modelBuilder.Entity("CozyComfortAPI.Model.BlanketModel", b =>
                 {
-                    b.HasOne("CozyComfortAPI.Model.Material", "Materials")
+                    b.HasOne("CozyComfortAPI.Model.Material", "Material")
                         .WithMany()
                         .HasForeignKey("MaterialID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Materials");
+                    b.Navigation("Material");
                 });
 
             modelBuilder.Entity("CozyComfortAPI.Model.Order", b =>
