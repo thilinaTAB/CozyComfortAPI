@@ -20,12 +20,12 @@ namespace CozyComfortAPI.Controllers
             repo = _repo;
         }
         [HttpPost]
-        public ActionResult AddProduct(ModelWriteDTO dto)
+        public ActionResult AddBlanketModel(ModelWriteDTO dto)
         {
             var blanketModel = mapper.Map<BlanketModel>(dto);
             if (repo.Add(blanketModel))
                 return Ok();
-            return BadRequest();
+            return BadRequest("Invalid Material ID or saving failed.");
         }
         [HttpGet]
         public ActionResult<List<ModelReadDTO>> GetblanketModels()

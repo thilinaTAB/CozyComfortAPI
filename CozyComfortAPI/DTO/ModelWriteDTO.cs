@@ -14,9 +14,6 @@ namespace CozyComfortAPI.DTO
         public int Stock { get; set; }
 
         [Required]
-        public string MaterialName { get; set; }
-
-        [Required]
-        public string MaterialDescription { get; set; }
+        public int MaterialID { get; set; }
     }
 }

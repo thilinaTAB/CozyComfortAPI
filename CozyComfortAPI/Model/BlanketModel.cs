@@ -21,7 +21,7 @@ namespace CozyComfortAPI.Model
         public int MaterialID { get; set; }
 
         [ForeignKey("MaterialID")]
-        public Material Materials { get; set; }
+        public Material Material { get; set; }
 
         public List<Order> Orders { get; set; } = new List<Order>();
     }

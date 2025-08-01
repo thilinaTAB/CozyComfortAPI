@@ -7,15 +7,10 @@ namespace CozyComfortAPI.Profiles
     {
         public BlanketProfile()
         {
-            CreateMap<ModelWriteDTO, BlanketModel>()
-                .ForMember(dest => dest.Materials, opt => opt.MapFrom(src => new Material
-                {
-                    MaterialName = src.MaterialName,
-                    Description = src.MaterialDescription
-                }));
+            CreateMap<ModelWriteDTO, BlanketModel>();
             CreateMap<BlanketModel, ModelReadDTO>()
-    .ForMember(dest => dest.MaterialName, opt => opt.MapFrom(src => src.Materials.MaterialName))
-    .ForMember(dest => dest.MaterialDescription, opt => opt.MapFrom(src => src.Materials.Description));
+    .ForMember(dest => dest.MaterialName, opt => opt.MapFrom(src => src.Material.MaterialName))
+    .ForMember(dest => dest.MaterialDescription, opt => opt.MapFrom(src => src.Material.Description));
         }
     }
 }
