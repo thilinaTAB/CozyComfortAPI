@@ -61,7 +61,7 @@ namespace CozyComfortAPI.Data
 
         public BlanketModel GetBlanketModel(int id)
         {
-            return db.BlanketModels.FirstOrDefault(x => x.ModelID == id);
+            return db.BlanketModels.Include(x => x.Material).FirstOrDefault(x => x.ModelID == id);
         }
     }
 }
