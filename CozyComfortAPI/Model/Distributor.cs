@@ -7,17 +7,17 @@ namespace CozyComfortAPI.Model
         [Key]
         public int DistributorID { get; set; }
         [Required]
-        public string Name { get; set; }
+        public string DistributorName { get; set; }
         [Required]
         public string Email { get; set; }
-        [Required]
 
         public List<Order> Orders { get; set; } = new List<Order>();
+        public List<DistributorStock> DistributorStocks { get; set; } = new List<DistributorStock>();
 
         public Distributor(int id, string name, string email)
         {
             DistributorID = id;
-            Name = name;
+            DistributorName = name;
             Email = email;
         }
 

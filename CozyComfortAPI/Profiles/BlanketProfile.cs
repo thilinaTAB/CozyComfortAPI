@@ -1,19 +1,26 @@
 ﻿using AutoMapper;
-using CozyComfortAPI.Model;
 using CozyComfortAPI.DTO;
-namespace CozyComfortAPI.Profiles
+using CozyComfortAPI.Model;
+
+namespace CozyComfortAPI.Helpers
 {
-    public class BlanketProfile:Profile
+    public class MappingProfiles : Profile
     {
-        public BlanketProfile()
+        public MappingProfiles()
         {
+            // Existing mappings for BlanketModel and Material
             CreateMap<ModelWriteDTO, BlanketModel>();
             CreateMap<BlanketModel, ModelReadDTO>()
-    .ForMember(dest => dest.MaterialName, opt => opt.MapFrom(src => src.Material.MaterialName))
-    .ForMember(dest => dest.MaterialDescription, opt => opt.MapFrom(src => src.Material.Description));
+                .ForMember(dest => dest.MaterialName, opt => opt.MapFrom(src => src.Material.MaterialName))
+                .ForMember(dest => dest.MaterialDescription, opt => opt.MapFrom(src => src.Material.Description));
 
             CreateMap<Material, MaterialReadDTO>();
             CreateMap<MaterialWriteDTO, Material>();
+
+            CreateMap<Distributor, DistributorReadDTO>();
+            CreateMap<DistributorWriteDTO, Distributor>();
+            CreateMap<DistributorStock, DistributorStockReadDTO>();
+            CreateMap<DistributorStockWriteDTO, DistributorStock>();
         }
     }
 }
