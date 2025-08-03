@@ -4,7 +4,7 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 var conn = "Data Source=HARSHAMAX_PC;Initial Catalog=CozyComfort;Integrated Security=True;TrustServerCertificate=True";
-builder.Services.AddDbContext<AppDBContext>(op=>op.UseSqlServer(conn));
+builder.Services.AddDbContext<AppDbContext>(op=>op.UseSqlServer(conn));
 builder.Services.AddScoped<BlanketModelRepo>();
 //Add services to the container
 builder.Services.AddControllers();

@@ -24,5 +24,6 @@ namespace CozyComfortAPI.Model
         public Material Material { get; set; }
 
         public List<Order> Orders { get; set; } = new List<Order>();
+        public List<DistributorStock> DistributorStocks { get; set; } = new List<DistributorStock>();
     }
 }

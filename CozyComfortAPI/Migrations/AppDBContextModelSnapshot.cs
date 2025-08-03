@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CozyComfortAPI.Migrations
 {
-    [DbContext(typeof(AppDBContext))]
+    [DbContext(typeof(AppDbContext))]
     partial class AppDBContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -76,17 +76,43 @@ namespace CozyComfortAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DistributorID"));
 
-                    b.Property<string>("Email")
+                    b.Property<string>("DistributorName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("DistributorID");
 
                     b.ToTable("Distributors");
+                });
+
+            modelBuilder.Entity("CozyComfortAPI.Model.DistributorStock", b =>
+                {
+                    b.Property<int>("DistributorStockID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DistributorStockID"));
+
+                    b.Property<int>("DistributorID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Inventory")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ModelID")
+                        .HasColumnType("int");
+
+                    b.HasKey("DistributorStockID");
+
+                    b.HasIndex("DistributorID");
+
+                    b.HasIndex("ModelID");
+
+                    b.ToTable("DistributorStocks");
                 });
 
             modelBuilder.Entity("CozyComfortAPI.Model.Material", b =>
@@ -202,6 +228,25 @@ namespace CozyComfortAPI.Migrations
                     b.Navigation("Material");
                 });
 
+            modelBuilder.Entity("CozyComfortAPI.Model.DistributorStock", b =>
+                {
+                    b.HasOne("CozyComfortAPI.Model.Distributor", "Distributor")
+                        .WithMany("DistributorStocks")
+                        .HasForeignKey("DistributorID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CozyComfortAPI.Model.BlanketModel", "BlanketModel")
+                        .WithMany("DistributorStocks")
+                        .HasForeignKey("ModelID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BlanketModel");
+
+                    b.Navigation("Distributor");
+                });
+
             modelBuilder.Entity("CozyComfortAPI.Model.Order", b =>
                 {
                     b.HasOne("CozyComfortAPI.Model.Distributor", "ByDistributor")
@@ -213,8 +258,15 @@ namespace CozyComfortAPI.Migrations
                     b.Navigation("ByDistributor");
                 });
 
+            modelBuilder.Entity("CozyComfortAPI.Model.BlanketModel", b =>
+                {
+                    b.Navigation("DistributorStocks");
+                });
+
             modelBuilder.Entity("CozyComfortAPI.Model.Distributor", b =>
                 {
+                    b.Navigation("DistributorStocks");
+
                     b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618

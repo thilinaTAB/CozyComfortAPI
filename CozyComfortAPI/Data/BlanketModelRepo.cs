@@ -4,8 +4,8 @@ namespace CozyComfortAPI.Data
 {
     public class BlanketModelRepo
     {
-        private AppDBContext db;
-        public BlanketModelRepo(AppDBContext dBContext)
+        private AppDbContext db;
+        public BlanketModelRepo(AppDbContext dBContext)
         {
             db = dBContext;
         }

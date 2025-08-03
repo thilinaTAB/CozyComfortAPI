@@ -12,10 +12,10 @@ namespace CozyComfortAPI.Controllers
     [ApiController]
     public class MaterialController : ControllerBase
     {
-        private readonly AppDBContext _context;
+        private readonly AppDbContext _context;
         private readonly IMapper _mapper;
 
-        public MaterialController(AppDBContext context, IMapper mapper)
+        public MaterialController(AppDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
