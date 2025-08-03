@@ -11,6 +11,9 @@ namespace CozyComfortAPI.Profiles
             CreateMap<BlanketModel, ModelReadDTO>()
     .ForMember(dest => dest.MaterialName, opt => opt.MapFrom(src => src.Material.MaterialName))
     .ForMember(dest => dest.MaterialDescription, opt => opt.MapFrom(src => src.Material.Description));
+
+            CreateMap<Material, MaterialReadDTO>();
+            CreateMap<MaterialWriteDTO, Material>();
         }
     }
 }
