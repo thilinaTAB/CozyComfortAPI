@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace CozyComfortAPI.Model
 {
@@ -23,7 +24,6 @@ namespace CozyComfortAPI.Model
 
         public Distributor()
         {
-
         }
     }
 }

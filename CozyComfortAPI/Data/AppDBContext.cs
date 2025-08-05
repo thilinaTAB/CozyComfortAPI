@@ -21,7 +21,6 @@ namespace CozyComfortAPI.Data
             model.Entity<Material>();
 
             model.Entity<BlanketModel>().Property(p => p.Price).HasColumnType("decimal(18,2)");
-            model.Entity<Order>().Property(p => p.Discount).HasColumnType("decimal(18,2)");
             model.Entity<Order>().Property(p => p.Total).HasColumnType("decimal(18,2)");
 
             model.Entity<BlanketModel>()

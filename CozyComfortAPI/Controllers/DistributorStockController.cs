@@ -22,7 +22,6 @@ namespace CozyComfortAPI.Controllers
             _context = context;
         }
 
-        // GET: api/DistributorStock/{distributorId}
         [HttpGet("{distributorId}")]
         public async Task<ActionResult<IEnumerable<DistributorStockReadDTO>>> GetDistributorStockByDistributorId(int distributorId)
         {
@@ -58,7 +57,6 @@ namespace CozyComfortAPI.Controllers
             return Ok(stocks);
         }
 
-        // POST: api/DistributorStock
         [HttpPost]
         public async Task<ActionResult<DistributorStockReadDTO>> CreateOrUpdateDistributorStock(DistributorStockWriteDTO stockDto)
         {
@@ -121,7 +119,6 @@ namespace CozyComfortAPI.Controllers
             return CreatedAtAction(nameof(GetDistributorStockByDistributorId), new { distributorId = createdStockDto.DistributorID }, createdStockDto);
         }
 
-        // PUT: api/DistributorStock/{distributorStockId}
         [HttpPut("{distributorStockId}")]
         public async Task<IActionResult> UpdateDistributorStock(int distributorStockId, DistributorStockWriteDTO stockDto)
         {
@@ -144,7 +141,6 @@ namespace CozyComfortAPI.Controllers
             return NoContent();
         }
 
-        // DELETE: api/DistributorStock/{distributorStockId}
         [HttpDelete("{distributorStockId}")]
         public async Task<IActionResult> DeleteDistributorStock(int distributorStockId)
         {

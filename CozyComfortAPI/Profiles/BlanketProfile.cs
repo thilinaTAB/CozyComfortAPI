@@ -8,7 +8,6 @@ namespace CozyComfortAPI.Helpers
     {
         public MappingProfiles()
         {
-            // Existing mappings for BlanketModel and Material
             CreateMap<ModelWriteDTO, BlanketModel>();
             CreateMap<BlanketModel, ModelReadDTO>()
                 .ForMember(dest => dest.MaterialName, opt => opt.MapFrom(src => src.Material.MaterialName))
@@ -21,6 +20,9 @@ namespace CozyComfortAPI.Helpers
             CreateMap<DistributorWriteDTO, Distributor>();
             CreateMap<DistributorStock, DistributorStockReadDTO>();
             CreateMap<DistributorStockWriteDTO, DistributorStock>();
+
+            CreateMap<Order, OrderReadDTO>();
+            CreateMap<OrderWriteDTO, Order>();
         }
     }
 }
