@@ -4,6 +4,7 @@ using CozyComfortAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CozyComfortAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250806140623_AddSeller")]
+    partial class AddSeller
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -197,92 +200,6 @@ namespace CozyComfortAPI.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("CozyComfortAPI.Models.Seller", b =>
-                {
-                    b.Property<int>("SellerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SellerId"));
-
-                    b.Property<string>("ApiSecretKey")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ContactEmail")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("SellerId");
-
-                    b.ToTable("Sellers");
-                });
-
-            modelBuilder.Entity("CozyComfortAPI.Models.SellerInventory", b =>
-                {
-                    b.Property<int>("SellerInventoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SellerInventoryId"));
-
-                    b.Property<int>("BlanketModelId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SellerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("SellerInventoryId");
-
-                    b.HasIndex("SellerId");
-
-                    b.ToTable("SellerInventories");
-                });
-
-            modelBuilder.Entity("CozyComfortAPI.Models.SellerOrder", b =>
-                {
-                    b.Property<int>("SellerOrderID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SellerOrderID"));
-
-                    b.Property<int>("DistributorStockID")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SellerID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("SellerOrderID");
-
-                    b.HasIndex("DistributorStockID");
-
-                    b.HasIndex("SellerID");
-
-                    b.ToTable("SellerOrders");
-                });
-
             modelBuilder.Entity("CozyComfortAPI.Model.BlanketModel", b =>
                 {
                     b.HasOne("CozyComfortAPI.Model.Material", "Material")
@@ -332,36 +249,6 @@ namespace CozyComfortAPI.Migrations
                     b.Navigation("Distributor");
                 });
 
-            modelBuilder.Entity("CozyComfortAPI.Models.SellerInventory", b =>
-                {
-                    b.HasOne("CozyComfortAPI.Models.Seller", "Seller")
-                        .WithMany("Inventory")
-                        .HasForeignKey("SellerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Seller");
-                });
-
-            modelBuilder.Entity("CozyComfortAPI.Models.SellerOrder", b =>
-                {
-                    b.HasOne("CozyComfortAPI.Model.DistributorStock", "DistributorStock")
-                        .WithMany()
-                        .HasForeignKey("DistributorStockID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CozyComfortAPI.Models.Seller", "Seller")
-                        .WithMany("Orders")
-                        .HasForeignKey("SellerID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("DistributorStock");
-
-                    b.Navigation("Seller");
-                });
-
             modelBuilder.Entity("CozyComfortAPI.Model.BlanketModel", b =>
                 {
                     b.Navigation("DistributorStocks");
@@ -372,13 +259,6 @@ namespace CozyComfortAPI.Migrations
             modelBuilder.Entity("CozyComfortAPI.Model.Distributor", b =>
                 {
                     b.Navigation("DistributorStocks");
-
-                    b.Navigation("Orders");
-                });
-
-            modelBuilder.Entity("CozyComfortAPI.Models.Seller", b =>
-                {
-                    b.Navigation("Inventory");
 
                     b.Navigation("Orders");
                 });

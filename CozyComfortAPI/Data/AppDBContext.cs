@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using CozyComfortAPI.Model;
+using CozyComfortAPI.Models;
 
 namespace CozyComfortAPI.Data
 {
@@ -13,12 +14,17 @@ namespace CozyComfortAPI.Data
         public DbSet<Material> Materials { get; set; }
         public DbSet<DistributorStock> DistributorStocks { get; set; }
 
+        public DbSet<CozyComfortAPI.Models.Seller> Sellers { get; set; }
+        public DbSet<CozyComfortAPI.Models.SellerInventory> SellerInventories { get; set; }
+        public DbSet<CozyComfortAPI.Models.SellerOrder> SellerOrders { get; set; }
+
         protected override void OnModelCreating(ModelBuilder model)
         {
             base.OnModelCreating(model);
 
             model.Entity<Distributor>();
             model.Entity<Material>();
+            model.Entity<Seller>();
 
             model.Entity<BlanketModel>().Property(p => p.Price).HasColumnType("decimal(18,2)");
             model.Entity<Order>().Property(p => p.Total).HasColumnType("decimal(18,2)");
