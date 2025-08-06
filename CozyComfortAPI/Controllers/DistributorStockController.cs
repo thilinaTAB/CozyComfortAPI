@@ -1,4 +1,5 @@
-﻿using CozyComfortAPI.Auth;
+﻿using AutoMapper;
+using CozyComfortAPI.Auth;
 using CozyComfortAPI.Data;
 using CozyComfortAPI.DTO;
 using CozyComfortAPI.Model;
@@ -10,43 +11,28 @@ using System.Threading.Tasks;
 
 namespace CozyComfortAPI.Controllers
 {
-    [ApiKeyAuth]
     [Route("api/[controller]")]
     [ApiController]
     public class DistributorStockController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public DistributorStockController(AppDbContext context)
+        public DistributorStockController(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
+        // Endpoint for a distributor to get their own specific stock
         [HttpGet("{distributorId}")]
+        [ApiKeyAuth("Distributor")] // Only a distributor can access this
         public async Task<ActionResult<IEnumerable<DistributorStockReadDTO>>> GetDistributorStockByDistributorId(int distributorId)
         {
             var stocks = await _context.DistributorStocks
                 .Where(s => s.DistributorID == distributorId)
                 .Include(s => s.BlanketModel)
                 .ThenInclude(bm => bm.Material)
-                .Select(s => new DistributorStockReadDTO
-                {
-                    DistributorStockID = s.DistributorStockID,
-                    Inventory = s.Inventory,
-                    DistributorID = s.DistributorID,
-                    ModelID = s.ModelID,
-                    BlanketModel = new ModelReadDTO
-                    {
-                        ModelID = s.BlanketModel.ModelID,
-                        ModelName = s.BlanketModel.ModelName,
-                        Price = s.BlanketModel.Price,
-                        Description = s.BlanketModel.Description,
-                        Stock = s.BlanketModel.Stock,
-                        MaterialID = s.BlanketModel.MaterialID,
-                        MaterialName = s.BlanketModel.Material.MaterialName,
-                        MaterialDescription = s.BlanketModel.Material.Description
-                    }
-                })
                 .ToListAsync();
 
             if (stocks == null || !stocks.Any())
@@ -54,10 +40,32 @@ namespace CozyComfortAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(stocks);
+            var stockReadDtos = _mapper.Map<List<DistributorStockReadDTO>>(stocks);
+            return Ok(stockReadDtos);
         }
 
+        // NEW: Endpoint for a seller to get ALL distributor stocks
+        [HttpGet("all")]
+        [ApiKeyAuth("Seller")] // Only a seller can access this
+        public async Task<ActionResult<IEnumerable<DistributorStockReadDTO>>> GetAllDistributorStocks()
+        {
+            var stocks = await _context.DistributorStocks
+                .Include(ds => ds.BlanketModel)
+                .ThenInclude(bm => bm.Material)
+                .ToListAsync();
+
+            if (!stocks.Any())
+            {
+                return NotFound("No distributor stocks found.");
+            }
+
+            var stockReadDtos = _mapper.Map<List<DistributorStockReadDTO>>(stocks);
+            return Ok(stockReadDtos);
+        }
+
+        // Endpoint for a distributor to create or update their stock
         [HttpPost]
+        [ApiKeyAuth("Distributor")] // Only a distributor can access this
         public async Task<ActionResult<DistributorStockReadDTO>> CreateOrUpdateDistributorStock(DistributorStockWriteDTO stockDto)
         {
             var distributorStock = await _context.DistributorStocks
@@ -67,11 +75,7 @@ namespace CozyComfortAPI.Controllers
 
             if (distributorStock == null)
             {
-                distributorStock = new DistributorStock
-                {
-                    DistributorID = stockDto.DistributorID,
-                    ModelID = stockDto.ModelID
-                };
+                distributorStock = _mapper.Map<DistributorStock>(stockDto);
                 _context.DistributorStocks.Add(distributorStock);
             }
             else
@@ -79,47 +83,19 @@ namespace CozyComfortAPI.Controllers
                 distributorStock.Inventory = stockDto.Inventory;
             }
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                var innerException = ex.InnerException;
-                return StatusCode(500, $"An error occurred while saving changes: {innerException?.Message}");
-            }
-            if (distributorStock.BlanketModel == null)
-            {
-                await _context.Entry(distributorStock).Reference(s => s.BlanketModel).LoadAsync();
-            }
-            if (distributorStock.BlanketModel.Material == null)
-            {
-                await _context.Entry(distributorStock.BlanketModel).Reference(bm => bm.Material).LoadAsync();
-            }
+            await _context.SaveChangesAsync();
 
-            var createdStockDto = new DistributorStockReadDTO
-            {
-                DistributorStockID = distributorStock.DistributorStockID,
-                Inventory = distributorStock.Inventory,
-                DistributorID = distributorStock.DistributorID,
-                ModelID = distributorStock.ModelID,
-                BlanketModel = new ModelReadDTO
-                {
-                    ModelID = distributorStock.BlanketModel.ModelID,
-                    ModelName = distributorStock.BlanketModel.ModelName,
-                    Price = distributorStock.BlanketModel.Price,
-                    Description = distributorStock.BlanketModel.Description,
-                    Stock = distributorStock.BlanketModel.Stock,
-                    MaterialID = distributorStock.BlanketModel.MaterialID,
-                    MaterialName = distributorStock.BlanketModel.Material.MaterialName,
-                    MaterialDescription = distributorStock.BlanketModel.Material.Description
-                }
-            };
+            // Reload related entities after save to ensure they are available for mapping
+            await _context.Entry(distributorStock).Reference(s => s.BlanketModel).LoadAsync();
+            await _context.Entry(distributorStock.BlanketModel).Reference(bm => bm.Material).LoadAsync();
 
+            var createdStockDto = _mapper.Map<DistributorStockReadDTO>(distributorStock);
             return CreatedAtAction(nameof(GetDistributorStockByDistributorId), new { distributorId = createdStockDto.DistributorID }, createdStockDto);
         }
 
+        // Endpoint for a distributor to update a stock item
         [HttpPut("{distributorStockId}")]
+        [ApiKeyAuth("Distributor")] // Only a distributor can access this
         public async Task<IActionResult> UpdateDistributorStock(int distributorStockId, DistributorStockWriteDTO stockDto)
         {
             var distributorStock = await _context.DistributorStocks.FindAsync(distributorStockId);
@@ -141,7 +117,9 @@ namespace CozyComfortAPI.Controllers
             return NoContent();
         }
 
+        // Endpoint for a distributor to delete a stock item
         [HttpDelete("{distributorStockId}")]
+        [ApiKeyAuth("Distributor")] // Only a distributor can access this
         public async Task<IActionResult> DeleteDistributorStock(int distributorStockId)
         {
             var distributorStock = await _context.DistributorStocks.FindAsync(distributorStockId);

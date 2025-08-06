@@ -27,13 +27,16 @@ namespace CozyComfortAPI.Auth
             }
 
             var configuration = context.HttpContext.RequestServices.GetRequiredService<IConfiguration>();
-            var manufacturerApiKey = configuration.GetValue<string>("ApiKeys:CozyComfortManufacturerKey"); 
+            var manufacturerApiKey = configuration.GetValue<string>("ApiKeys:CozyComfortManufacturerKey");
             var distributorKey = configuration.GetValue<string>("ApiKeys:CozyComfortDistributorKey");
+            var sellerKey = configuration.GetValue<string>("ApiKeys:CozyComfortSellerKey");
 
             bool isManufacturerKey = extractedApiKey == manufacturerApiKey;
             bool isDistributorKey = extractedApiKey == distributorKey;
+            bool isSellerKey = extractedApiKey == sellerKey;
 
-            if (!isManufacturerKey && !isDistributorKey)
+            // Check if the extracted key matches ANY of the valid keys
+            if (!isManufacturerKey && !isDistributorKey && !isSellerKey)
             {
                 context.Result = new UnauthorizedResult();
                 return;
@@ -41,25 +44,24 @@ namespace CozyComfortAPI.Auth
 
             if (!string.IsNullOrEmpty(_requiredRole))
             {
-                if (_requiredRole == "Manufacturer")
+                if (_requiredRole == "Manufacturer" && !isManufacturerKey)
                 {
-                    if (!isManufacturerKey)
-                    {
-                        context.Result = new ForbidResult();
-                        return;
-                    }
+                    context.Result = new ForbidResult();
+                    return;
                 }
-                else if (_requiredRole == "Distributor")
+                else if (_requiredRole == "Distributor" && !isDistributorKey)
                 {
-                    if (!isDistributorKey && !isManufacturerKey)
-                    {
-                        context.Result = new ForbidResult();
-                        return;
-                    }
+                    context.Result = new ForbidResult();
+                    return;
+                }
+                else if (_requiredRole == "Seller" && !isSellerKey)
+                {
+                    context.Result = new ForbidResult();
+                    return;
                 }
             }
 
             await next();
         }
     }
-}
+}   

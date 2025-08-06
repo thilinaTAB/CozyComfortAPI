@@ -27,19 +27,14 @@ namespace CozyComfortAPI.Helpers
 
             // --- New Mappings for Seller Orders ---
 
-            // Mapping from SellerOrderWriteDTO to SellerOrder
-            // We ignore properties that are manually set in the SellerOrderController
-            CreateMap<SellerOrderWriteDTO, SellerOrder>()
-                .ForMember(dest => dest.SellerID, opt => opt.Ignore())
-                .ForMember(dest => dest.OrderDate, opt => opt.Ignore())
-                .ForMember(dest => dest.Total, opt => opt.Ignore())
-                .ForMember(dest => dest.Status, opt => opt.Ignore());
+            // Simple mapping from DTO to model
+            CreateMap<SellerOrderWriteDTO, SellerOrder>();
 
-            // Mapping from SellerOrder to SellerOrderReadDTO
-            // This ensures ModelName and Price are correctly populated from nested objects
+            // Mapping from model to DTO, including calculations
             CreateMap<SellerOrder, SellerOrderReadDTO>()
                 .ForMember(dest => dest.ModelName, opt => opt.MapFrom(src => src.DistributorStock.BlanketModel.ModelName))
-                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.DistributorStock.BlanketModel.Price));
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.DistributorStock.BlanketModel.Price))
+                .ForMember(dest => dest.Total, opt => opt.MapFrom(src => src.DistributorStock.BlanketModel.Price * src.Quantity));
         }
     }
 }
