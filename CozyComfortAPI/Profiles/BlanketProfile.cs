@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CozyComfortAPI.DTO;
 using CozyComfortAPI.Model;
+using CozyComfortAPI.Models; // Make sure to include this namespace for Seller and SellerOrder
 
 namespace CozyComfortAPI.Helpers
 {
@@ -23,6 +24,31 @@ namespace CozyComfortAPI.Helpers
 
             CreateMap<Order, OrderReadDTO>();
             CreateMap<OrderWriteDTO, Order>();
+
+            // --- New Mappings for Seller Orders ---
+
+            // Simple mapping from DTO to model
+            CreateMap<SellerOrderWriteDTO, SellerOrder>();
+
+            // Mapping from model to DTO, including calculations
+            CreateMap<SellerOrder, SellerOrderReadDTO>()
+                .ForMember(dest => dest.ModelName, opt => opt.MapFrom(src => src.DistributorStock.BlanketModel.ModelName))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.DistributorStock.BlanketModel.Price))
+                .ForMember(dest => dest.Total, opt => opt.MapFrom(src => src.DistributorStock.BlanketModel.Price * src.Quantity));
+
+
+            // Map from the database model to the DTO for GET requests
+            CreateMap<SellerInventory, SellerInventoryUpdateDTO>()
+                .ForMember(dest => dest.InventoryId, opt => opt.MapFrom(src => src.SellerInventoryId))
+                .ForMember(dest => dest.ModelName, opt => opt.MapFrom(src => src.BlanketModel.ModelName))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.BlanketModel.Description))
+                .ForMember(dest => dest.MaterialName, opt => opt.MapFrom(src => src.BlanketModel.Material.MaterialName))
+                .ForMember(dest => dest.MaterialDescription, opt => opt.MapFrom(src => src.BlanketModel.Material.Description));
+
+            // Map from the DTO back to the database model for POST/PUT requests
+            CreateMap<SellerInventoryUpdateDTO, SellerInventory>()
+                .ForMember(dest => dest.SellerInventoryId, opt => opt.MapFrom(src => src.InventoryId));
+
         }
     }
 }

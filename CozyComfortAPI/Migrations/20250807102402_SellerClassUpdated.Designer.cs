@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CozyComfortAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250805181407_Database")]
-    partial class Database
+    [Migration("20250807102402_SellerClassUpdated")]
+    partial class SellerClassUpdated
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -183,6 +183,11 @@ namespace CozyComfortAPI.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<decimal>("Total")
                         .HasColumnType("decimal(18,2)");
 
@@ -193,6 +198,88 @@ namespace CozyComfortAPI.Migrations
                     b.HasIndex("ModelID");
 
                     b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("CozyComfortAPI.Models.Seller", b =>
+                {
+                    b.Property<int>("SellerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SellerId"));
+
+                    b.Property<string>("ContactEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SellerId");
+
+                    b.ToTable("Sellers");
+                });
+
+            modelBuilder.Entity("CozyComfortAPI.Models.SellerInventory", b =>
+                {
+                    b.Property<int>("SellerInventoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SellerInventoryId"));
+
+                    b.Property<int>("BlanketModelId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SellerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("SellerInventoryId");
+
+                    b.HasIndex("SellerId");
+
+                    b.ToTable("SellerInventories");
+                });
+
+            modelBuilder.Entity("CozyComfortAPI.Models.SellerOrder", b =>
+                {
+                    b.Property<int>("SellerOrderID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SellerOrderID"));
+
+                    b.Property<int>("DistributorStockID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SellerID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("SellerOrderID");
+
+                    b.HasIndex("DistributorStockID");
+
+                    b.HasIndex("SellerID");
+
+                    b.ToTable("SellerOrders");
                 });
 
             modelBuilder.Entity("CozyComfortAPI.Model.BlanketModel", b =>
@@ -244,6 +331,34 @@ namespace CozyComfortAPI.Migrations
                     b.Navigation("Distributor");
                 });
 
+            modelBuilder.Entity("CozyComfortAPI.Models.SellerInventory", b =>
+                {
+                    b.HasOne("CozyComfortAPI.Models.Seller", null)
+                        .WithMany("Inventory")
+                        .HasForeignKey("SellerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CozyComfortAPI.Models.SellerOrder", b =>
+                {
+                    b.HasOne("CozyComfortAPI.Model.DistributorStock", "DistributorStock")
+                        .WithMany()
+                        .HasForeignKey("DistributorStockID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CozyComfortAPI.Models.Seller", "Seller")
+                        .WithMany("Orders")
+                        .HasForeignKey("SellerID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DistributorStock");
+
+                    b.Navigation("Seller");
+                });
+
             modelBuilder.Entity("CozyComfortAPI.Model.BlanketModel", b =>
                 {
                     b.Navigation("DistributorStocks");
@@ -254,6 +369,13 @@ namespace CozyComfortAPI.Migrations
             modelBuilder.Entity("CozyComfortAPI.Model.Distributor", b =>
                 {
                     b.Navigation("DistributorStocks");
+
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("CozyComfortAPI.Models.Seller", b =>
+                {
+                    b.Navigation("Inventory");
 
                     b.Navigation("Orders");
                 });
