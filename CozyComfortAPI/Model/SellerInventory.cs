@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CozyComfortAPI.Model;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CozyComfortAPI.Models
@@ -16,5 +17,8 @@ namespace CozyComfortAPI.Models
         public int BlanketModelId { get; set; }
 
         public int Quantity { get; set; }
+
+        public BlanketModel BlanketModel { get; set; }
+        public Seller Seller { get; set; }
     }
 }

@@ -24,7 +24,6 @@ namespace CozyComfortAPI.Controllers
         // GET: api/Material
         // Accessible by Manufacturer, Distributor
         [HttpGet]
-        [ApiKeyAuth(requiredRole: "Distributor")]
         public async Task<ActionResult<IEnumerable<MaterialReadDTO>>> GetMaterials()
         {
             var materials = await _context.Materials.ToListAsync();
@@ -33,7 +32,6 @@ namespace CozyComfortAPI.Controllers
 
         // Accessible by Manufacturer, Distributor
         [HttpGet("{id}")]
-        [ApiKeyAuth(requiredRole: "Distributor")]
         public async Task<ActionResult<MaterialReadDTO>> GetMaterial(int id)
         {
             var material = await _context.Materials.FindAsync(id);

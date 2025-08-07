@@ -5,7 +5,7 @@
 namespace CozyComfortAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class AddSeller2 : Migration
+    public partial class SellerClassUpdated : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

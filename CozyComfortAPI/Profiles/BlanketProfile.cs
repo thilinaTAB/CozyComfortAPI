@@ -35,6 +35,20 @@ namespace CozyComfortAPI.Helpers
                 .ForMember(dest => dest.ModelName, opt => opt.MapFrom(src => src.DistributorStock.BlanketModel.ModelName))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.DistributorStock.BlanketModel.Price))
                 .ForMember(dest => dest.Total, opt => opt.MapFrom(src => src.DistributorStock.BlanketModel.Price * src.Quantity));
+
+
+            // Map from the database model to the DTO for GET requests
+            CreateMap<SellerInventory, SellerInventoryUpdateDTO>()
+                .ForMember(dest => dest.InventoryId, opt => opt.MapFrom(src => src.SellerInventoryId))
+                .ForMember(dest => dest.ModelName, opt => opt.MapFrom(src => src.BlanketModel.ModelName))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.BlanketModel.Description))
+                .ForMember(dest => dest.MaterialName, opt => opt.MapFrom(src => src.BlanketModel.Material.MaterialName))
+                .ForMember(dest => dest.MaterialDescription, opt => opt.MapFrom(src => src.BlanketModel.Material.Description));
+
+            // Map from the DTO back to the database model for POST/PUT requests
+            CreateMap<SellerInventoryUpdateDTO, SellerInventory>()
+                .ForMember(dest => dest.SellerInventoryId, opt => opt.MapFrom(src => src.InventoryId));
+
         }
     }
 }

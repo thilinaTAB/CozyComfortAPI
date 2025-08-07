@@ -205,10 +205,6 @@ namespace CozyComfortAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SellerId"));
 
-                    b.Property<string>("ApiSecretKey")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ContactEmail")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -334,13 +330,11 @@ namespace CozyComfortAPI.Migrations
 
             modelBuilder.Entity("CozyComfortAPI.Models.SellerInventory", b =>
                 {
-                    b.HasOne("CozyComfortAPI.Models.Seller", "Seller")
+                    b.HasOne("CozyComfortAPI.Models.Seller", null)
                         .WithMany("Inventory")
                         .HasForeignKey("SellerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Seller");
                 });
 
             modelBuilder.Entity("CozyComfortAPI.Models.SellerOrder", b =>
